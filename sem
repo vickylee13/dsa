@@ -1,0 +1,648 @@
+1.
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+void insert(Node*& head, int data) {
+    Node* newNode = new Node();
+    newNode->data = data;
+
+    if (!head) {
+        head = newNode;
+        head->next = head; 
+    } else {
+        Node* temp = head;
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = head; 
+    }
+}
+
+void deleteFirstNode(Node*& head) {
+    if (!head) return; 
+
+    if (head->next == head) { 
+        delete head;
+        head = nullptr;
+    } else {
+        Node* temp = head;
+        Node* last = head;
+        while (last->next != head) {
+            last = last->next;
+        }
+        head = head->next; 
+        last->next = head; 
+        delete temp;
+    }
+}
+
+void displayList(Node* head) {
+    if (!head) return; 
+    Node* temp = head;
+    do {
+        cout << temp->data << " ";
+        temp = temp->next;
+    } while (temp != head);
+    cout << endl;
+}
+
+int main() {
+    int Ls;
+    cin >> Ls; 
+    Node* head = nullptr;
+
+    for (int i = 0; i < Ls; i++) {
+        int value;
+        cin >> value;
+        insert(head, value);
+    }
+
+    deleteFirstNode(head);
+
+    displayList(head);
+
+    return 0;
+}
+
+-----------------------------------------------------------------------------------
+
+2.
+
+#include <iostream>
+using namespace std;
+
+struct node {
+    int data;
+    node* next;
+};
+
+node* head = NULL;
+
+void insertAtBegin(int data) {
+    node* newNode = new node();
+    newNode->data = data;
+    newNode->next = head;
+    head = newNode;
+}
+
+void display() {
+    node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    int data;
+    for (int i = 0; i < n; i++) {
+        cin >> data;
+        insertAtBegin(data);
+    }
+    display();
+}
+
+
+----------------------------------------------------------------------------------
+
+3.
+
+#include <iostream>
+#include <stack>
+#include <sstream>
+using namespace std;
+
+int evaluatePostfix(const string& expression) {
+    stack<int> stk;
+    istringstream tokens(expression);
+    string token;
+
+    while (tokens >> token) {
+        if (isdigit(token[0])) {
+            stk.push(stoi(token));
+        } else {
+            int operand1 = stk.top(); stk.pop();
+            int operand2 = stk.top(); stk.pop();
+            int result;
+
+            if (token == "+") result = operand2 + operand1;
+            else if (token == "-") result = operand2 - operand1;
+            else if (token == "*") result = operand2 * operand1;
+            else if (token == "/") result = operand2 / operand1;
+
+            stk.push(result);
+        }
+    }
+    return stk.top();
+}
+
+int main() {
+    string expression;
+    getline(cin, expression);  // Input the postfix expression as a single line
+    cout << evaluatePostfix(expression) << endl;
+    return 0;
+}
+
+
+--------------------------------------------------------------------------------------
+
+4.
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+class Stack {
+private:
+    Node* top;
+
+public:
+    Stack() {
+        top = nullptr;
+    }
+
+    void push(int value) {
+        Node* newNode = new Node();
+        newNode->data = value;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    void pop() {
+        if (top == nullptr) {
+            cout << "Stack is empty\n";
+            return;
+        }
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+    }
+
+    void display() {
+        Node* current = top;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    int peek() {
+        if (top != nullptr) {
+            return top->data;
+        }
+        return -1; // Return -1 if the stack is empty
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+};
+
+int main() {
+    Stack stack;
+    int n, value;
+
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        cin >> value;
+        stack.push(value);
+    }
+
+    stack.display();
+    
+    cout << "Top element is " << stack.peek() << endl;
+
+    stack.pop();
+
+    stack.display();
+
+    cout << "Top element is " << stack.peek() << endl;
+
+    return 0;
+}
+
+
+--------------------------------------------------------------------------
+
+5.
+
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+
+int rear = 0;
+int front = 0;
+
+void reverseFirstKElements(queue<int>& q, int k) {
+    if (q.empty() || k > q.size() || k <= 0)
+        return;
+
+    stack<int> s;
+    
+    // Push the first k elements of the queue into a stack
+    for (int i = 0; i < k; ++i) {
+        s.push(q.front());
+        q.pop();
+    }
+    
+    // Enqueue elements from the stack back to the queue
+    while (!s.empty()) {
+        q.push(s.top());
+        s.pop();
+    }
+    
+    int remainingElements = q.size() - k;
+    for (int i = 0; i < remainingElements; ++i) {
+        q.push(q.front());
+        q.pop();
+    }
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    queue<int> q;
+    for (int i = 0; i < n; ++i) {
+        int element;
+        cin >> element;
+        q.push(element);
+    }
+    
+    reverseFirstKElements(q, k);
+    
+    cout << "Reversed queue: " << endl;
+    while (!q.empty()) {
+        cout << q.front() << " ";
+        q.pop();
+    }
+    cout << endl;
+    
+    return 0;
+}
+
+
+----------------------------------------------------------------------
+
+6.
+
+#include <iostream>
+#include <queue>
+#include <string>
+
+void generateBinaryNumbers(int N) {
+    std::queue<std::string> q;
+    q.push("1");
+
+    for (int i = 0; i < N; ++i) {
+        std::string current = q.front();
+        q.pop();
+        std::cout << current << std::endl;
+        q.push(current + "0");
+        q.push(current + "1");
+    }
+}
+
+int main() {
+    int N;
+    std::cin >> N;
+
+    if (N > 0) {
+        generateBinaryNumbers(N);
+    }
+
+    return 0;
+}
+
+
+----------------------------------------------------------------------
+
+7. Trees
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node {
+    int data;
+    struct node* left = NULL;
+    struct node* right = NULL;
+} *root = NULL, *temp;
+
+void create(int input) {
+    struct node* new_node = new struct node;
+    new_node->data = input;
+    
+    if (root == NULL) {
+        root = new_node;
+    } else {
+        temp = root;
+        while (1) {
+            if (temp->data == input) break;
+            
+            if (input < temp->data && temp->left == NULL) {
+                temp->left = new_node;
+                break;
+            }
+            else if (input > temp->data && temp->right == NULL) {
+                temp->right = new_node;
+                break;
+            }
+            else if (input < temp->data && temp->left != NULL) {
+                temp = temp->left;
+            }
+            else if (input > temp->data && temp->right != NULL) {
+                temp = temp->right;
+            }
+        }
+    }
+}
+
+int LCA(struct node* temp, int n1, int n2) {
+    if (temp == NULL)
+        return -1;
+
+    else if ((n1 < temp->data) && (n2 < temp->data))
+        return LCA(temp->left, n1, n2);
+
+    else if ((n1 > temp->data) && (n2 > temp->data))
+        return LCA(temp->right, n1, n2);
+
+    return temp->data;
+}
+
+int main() {
+    int input;
+  
+    while (1) {
+        cin >> input;
+        if (input < 1)
+            break;
+        create(input);
+    }
+  
+    int n1, n2;
+    cin >> n1 >> n2;
+    cout << LCA(root, n1, n2);
+    return 0;
+}
+
+
+--------------------------------------------------------------
+
+8. Trees
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> myvec;
+
+class Node {
+public:
+    int data;
+    Node *left = NULL;
+    Node *right = NULL;
+} *root;
+
+void Insert(Node *temp, int c) {
+    if (temp == NULL) {
+        Node *new_node = new Node();
+        new_node->data = c;
+        root = new_node;
+        return;
+    }
+  
+    else if (c > temp->data && temp->right == NULL) {
+        Node *new_node = new Node();
+        new_node->data = c;
+        temp->right = new_node;
+        temp = new_node;
+        return;
+    }
+  
+    else if (c > temp->data && temp->right != NULL) {
+        temp = temp->right;
+        Insert(temp, c);
+    }
+  
+    else if (c < temp->data && temp->left == NULL) {
+        Node *new_node = new Node();
+        new_node->data = c;
+        temp->left = new_node;
+        temp = new_node;
+        return;
+    }
+  
+    else if (c < temp->data && temp->left != NULL) {
+        temp = temp->left;
+        Insert(temp, c);
+    }
+}
+
+void Inorder(Node *temp) {
+    if (temp == NULL)
+        return;
+    else {
+        Inorder(temp->left);
+        myvec.push_back(temp->data);
+        Inorder(temp->right);
+    }
+}
+
+int main() {
+    int key, node_count = 0;
+    root = NULL;
+    int c;
+    
+    while (1) {
+        cin >> c;
+        if (c < 1) {
+            break;
+        }
+        Insert(root, c);
+        node_count++;
+    }
+
+    Inorder(root);
+    cin >> key;
+    
+    if (key <= node_count)
+        cout << myvec.at(key - 1);
+    else
+        cout << "No such k value exists";
+
+    return 0;
+}
+
+
+------------------------------------------------------------------
+
+9.
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+vector<int> bfs(const vector<vector<int>>& adjMatrix, int source, int goal) {
+    int n = adjMatrix.size();
+    vector<int> parent(n, -1);      // To store the path
+    vector<bool> visited(n, false); // To mark visited nodes
+    queue<int> q;
+    
+    visited[source] = true;
+    q.push(source);
+
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+
+        if (current == goal) {
+            // Goal reached, construct the path
+            vector<int> path;
+            for (int v = goal; v != -1; v = parent[v]) {
+                path.push_back(v);
+            }
+            reverse(path.begin(), path.end());
+            return path;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                parent[i] = current;
+                q.push(i);
+            }
+        }
+    }
+
+    // Return empty vector if no path found
+    return {};
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<vector<int>> adjMatrix(n, vector<int>(n));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> adjMatrix[i][j];
+        }
+    }
+
+    int source, goal;
+    cin >> source >> goal;
+
+    if (source < 0 || source >= n || goal < 0 || goal >= n) {
+        cout << "Not found" << endl;
+        return 0;
+    }
+
+    vector<int> path = bfs(adjMatrix, source, goal);
+
+    if (path.empty()) {
+        cout << "Not found" << endl;
+    } else {
+        cout << path.size() - 1 << endl;
+        for (int node : path) {
+            cout << node << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+---------------------------------------------------------------------
+
+10.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int rowDir[] = {-1, 1, 0, 0, -1, -1, 1, 1};
+int colDir[] = {0, 0, 1, -1, -1, 1, 1, -1};
+
+bool isValid(int x, int y, int M, int N) {
+    return x >= 0 && x < M && y >= 0 && y < N;
+}
+
+int dfs(int x, int y, int M, int N, vector<vector<char>>& matrix, vector<vector<int>>& memo) {
+    if (memo[x][y] != -1) {
+        return memo[x][y];
+    }
+
+    int maxLength = 1;
+
+    for (int i = 0; i < 8; i++) {
+        int newX = x + rowDir[i];
+        int newY = y + colDir[i];
+
+        if (isValid(newX, newY, M, N) && matrix[newX][newY] == matrix[x][y] + 1) {
+            maxLength = max(maxLength, 1 + dfs(newX, newY, M, N, matrix, memo));
+        }
+    }
+
+    memo[x][y] = maxLength;
+    return memo[x][y];
+}
+
+int main() {
+    int M, N;
+    cin >> M >> N;
+
+    vector<vector<char>> matrix(M, vector<char>(N));
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+
+    char startChar;
+    cin >> startChar;
+
+    vector<vector<int>> memo(M, vector<int>(N, -1));
+
+    int longestPath = 0;
+
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            if (matrix[i][j] == startChar) {
+                longestPath = max(longestPath, dfs(i, j, M, N, matrix, memo));
+            }
+        }
+    }
+
+    cout << "The length of the longest path with consecutive characters starting from character "
+         << startChar << " is " << longestPath << endl;
+
+    return 0;
+}
+
+
+------------------------------------------------------------------------------------------------
+
+
+
+
